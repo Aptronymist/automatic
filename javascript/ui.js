@@ -536,3 +536,14 @@ async function reconnectUI() {
   sd_model_observer.observe(sd_model, { attributes: true, childList: true, subtree: true });
   log('reconnectUI');
 }
+
+function updateIncrementSize() {
+  const hiDiffusionEnabled = gradioApp().getElementById('hidiffusion_enabled').checked;
+  const incrementSize = hiDiffusionEnabled ? 128 : 8;
+  const widthControl = gradioApp().getElementById('txt2img_width');
+  const heightControl = gradioApp().getElementById('txt2img_height');
+  if (widthControl) widthControl.step = incrementSize;
+  if (heightControl) heightControl.step = incrementSize;
+}
+
+document.getElementById('hidiffusion_enabled').addEventListener('change', updateIncrementSize);

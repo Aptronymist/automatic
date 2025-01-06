@@ -1,15 +1,12 @@
-// attaches listeners to the txt2img and img2img galleries to update displayed generation param text when the image changes
-
 function attachGalleryListeners(tabName) {
   const gallery = gradioApp().querySelector(`#${tabName}_gallery`);
   if (!gallery) return null;
   gallery.addEventListener('click', () => {
-    // log('galleryItemSelected:', tabName);
     const btn = gradioApp().getElementById(`${tabName}_generation_info_button`);
     if (btn) btn.click();
   });
   gallery?.addEventListener('keydown', (e) => {
-    if (e.keyCode === 37 || e.keyCode === 39) gradioApp().getElementById(`${tabName}_generation_info_button`).click(); // left or right arrow
+    if (e.keyCode === 37 || e.keyCode === 39) gradioApp().getElementById(`${tabName}_generation_info_button`).click();
   });
   return gallery;
 }
@@ -38,4 +35,16 @@ async function initiGenerationParams() {
   if (!control_gallery) control_gallery = attachGalleryListeners('control');
   modalObserver.observe(modal, { attributes: true, attributeFilter: ['style'] });
   log('initGenerationParams');
+}
+
+function onCalcResolutionHires(width, height, hr_scale, hr_resize_x, hr_resize_y, hr_upscaler) {
+  const setInactive = (elem, inactive) => elem.classList.toggle('inactive', !!inactive);
+  const hrUpscaleBy = gradioApp().getElementById('txt2img_hr_scale');
+  const hrResizeX = gradioApp().getElementById('txt2img_hr_resize_x');
+  const hrResizeY = gradioApp().getElementById('txt2img_hr_resize_y');
+  setInactive(hrUpscaleBy, hr_resize_x > 0 || hr_resize_y > 0);
+  setInactive(hrResizeX, hr_resize_x === 0);
+  setInactive(hrResizeY, hr_resize_y === 0);
+  updateIncrementSize();
+  return [width, height, hr_scale, hr_resize_x, hr_resize_y, hr_upscaler];
 }
